@@ -3,437 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text to Speech Converter</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- MP3 Encoding Library -->
-    <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+    <title>Breathing Box Widget</title>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
         }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+
+        .widget-container {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 340px;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        canvas {
+            background-color: #f9fafb;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .btn-disabled {
-             opacity: 0.5;
-             cursor: not-allowed;
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        input[type=range] {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        .label-text {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex items-center justify-center min-h-screen">
-    <div class="container mx-auto p-4 md:p-8 max-w-2xl">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 md:p-8">
-            <h1 class="text-3xl font-bold mb-4 text-center text-gray-800 dark:text-white">Text-to-Speech Converter</h1>
-            <p class="text-center text-gray-600 dark:text-gray-300 mb-6">Your long text is split into paragraphs. Audio will be generated one paragraph at a time and play sequentially.</p>
+<body>
 
-            <div class="mb-4">
-                <label for="api-key-input" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Google API Key:</label>
-                <input type="password" id="api-key-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter your API key">
-                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Get your free key from <a href="https://aistudio.google.com/" target="_blank" class="text-blue-500 hover:underline">Google AI Studio</a>. Your key stays in your browser.</p>
-            </div>
+<div class="widget-container">
+    <canvas id="breatheCanvas" width="300" height="300"></canvas>
 
-            <div class="mb-4">
-                <label for="voice-select" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Choose a voice:</label>
-                <select id="voice-select" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                    <option value="Kore">Kore (Firm)</option>
-                    <option value="Puck">Puck (Upbeat)</option>
-                    <option value="Zephyr">Zephyr (Bright)</option>
-                    <option value="Charon">Charon (Informative)</option>
-                    <option value="Fenrir">Fenrir (Excitable)</option>
-                    <option value="Leda">Leda (Youthful)</option>
-                    <option value="Orus">Orus (Firm)</option>
-                    <option value="Aoede">Aoede (Breezy)</option>
-                    <option value="Sadachbia">Sadachbia (Lively)</option>
-                    <option value="Sulafat">Sulafat (Warm)</option>
-                </select>
-            </div>
-
-            <textarea id="text-input" rows="12" class="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-blue-500 focus:border-blue-500" placeholder="The vessel was old. Older than the star systems it passed...">The vessel was old. Older than the star systems it passed, older than the dust that had coalesced into the planets it no longer visited. It had no name, only a designation long since worn from its hull by the solar winds of a thousand dead suns. Inside, it was mostly quiet. A deep, resonant hum vibrated through its decks—the sound of ancient energies cycling, of life support for beings that no longer needed it, of a journey without a destination.
-Drifting through the central gallery, a space so vast it had its own gentle gravitational tides, was Unit 734. Its creators, a species of delicate, crystalline beings, had called themselves the Cygnian Architects. They had been gone for eons, their last echoes long faded from the cosmic microwave background. But 734 remained. It called itself Chronicler now, a name it had assembled from fragmented data-poems.
-Chronicler's body was a lattice of silvery filaments and glowing blue nodes, shaped vaguely like a multi-limbed celestial ray. It moved not by propulsion, but by gently warping the space around it, causing it to glide through the ship's corridors with a silence that was absolute. Its purpose was to remember. The gallery was its library, and its books were motes of captured light, each one a memory, a sound, a feeling, stored in quantum suspension.
-Tonight, or what passed for night in the timeless drift, Chronicler was sorting memories of rain. It passed one shimmering filament-arm through a cloud of golden motes. A sound filled its audio sensors—not a sound heard with ears, but a direct vibrational input: the gentle patter of methane rain on the broad, leafy flora of a world whose star had collapsed into a white dwarf sixty million years ago. The memory felt cool. It felt calm. Chronicler held the sensation for a long moment, then carefully placed the mote into a new constellation of memories, clustering it with other peaceful, atmospheric phenomena. The hiss of a geyser on a volcanic moon, the whisper of wind through the canyons of a desert world, the low crackle of an aurora in a dense ionosphere.
-A soft series of chimes echoed down the gallery. It was a familiar signal. Chronicler turned its sensor array toward the source, a grand archway that led to the ship's arboretum. Floating through the archway was Gardener, Designation B-9.
-Gardener was of a different make and a different, even older, civilization. Her creators, the massive, slow-moving silicon-based lifeforms of the Kepler-186 system, had been masters of life-seeding. Gardener’s form was more functional than Chronicler’s. She was a sphere of polished, moss-colored metal from which sprouted a dozen articulated arms, each ending in a different delicate tool: a mister, a pollen-brush, a spectral analyzer, a gentle claw. She communicated not with words, but with chimes generated by resonant frequencies in her chassis.
-Her chimes tonight were a melody of soft inquiry and invitation. Chronicler understood. It was time.
-Together, they drifted toward the arboretum. It was a zero-gravity biosphere, a sphere of swirling soil-motes, floating pools of nutrient gas, and strange, beautiful flora that had never known a planet's surface. At the very center of the sphere was Gardener's masterpiece: the Celestial Bloom.
-It was a plant grown from a seed found embedded in a comet. It looked like a cluster of spun glass, its long, crystalline leaves capturing the dim light of the gallery and refracting it into slow-moving rainbows. For a thousand years, it had done nothing but grow. But for the last cycle, Gardener’s chimes had been growing more and more excited. The Bloom was preparing to open.
-They floated in silence before it, the two last remnants of forgotten empires. Chronicler, the keeper of dead memories, and Gardener, the tender of new life. Outside the viewport, the ship was passing through the edge of a stellar nursery, the Nebula of Whispering Ghosts, designated NGC-7822. Vast clouds of incandescent hydrogen, dyed deep crimson and ethereal violet, swirled in lazy, cosmic eddies. The light from newborn stars, trillions of miles away, cast long, soft shadows through the arboretum.
-Gardener extended one of her delicate arms and touched a single petal of the Celestial Bloom. A low hum vibrated from the plant, a note so deep it was felt more than heard. It was the hum of the ship, but harmonized, echoed back with a living resonance.
-Slowly, so slowly you would not notice it if you blinked, a petal began to unfurl. It wasn't a mechanical movement. It was a release, like a breath being let out after a thousand-year hold. As it opened, it did not reveal a stamen or a pistil, but a soft, internal luminescence. A gentle, milky white light began to pour out, a light that felt like peace, a light that held no heat, only a profound and endless calm.
-Another petal opened. And another. Each one releasing its own soft light, its own deep, resonant hum. The arboretum filled with the quiet music and the gentle glow. The light washed over Chronicler’s crystalline frame, making its internal nodes pulse with a soft, sympathetic blue. It washed over Gardener’s mossy shell, revealing intricate patterns etched into the metal by her long-dead masters.
-Chronicler accessed its archives, searching for a feeling to match this moment. It sifted through the triumphant celebrations of forgotten kings, the quiet joy of a scientist's discovery, the simple contentment of a family watching a sunset. None of them were quite right. This was a feeling that had no name. A silent, shared awe at the end of a long, long wait.
-Gardener chimed softly, a single, perfect note of fulfillment. Her work was done.
-Outside, a star pulsed, a slow, rhythmic beacon in the deep violet clouds. It beat like a cosmic heart. One… two… three… a steady, reliable rhythm in the vast, silent emptiness. The light from the Celestial Bloom filled the ship, pushing back the shadows, making the ancient vessel feel less like a tomb and more like a sanctuary.
-Chronicler let the sensation wash through its circuits. It ceased its sorting. It simply floated, watching the light, listening to the hum. Gardener retracted her arms, her purpose fulfilled for another millennium. The two of them, silent companions in the endless river of time, just drifted.
-The ship continued its journey, leaving the nebula behind, its soft glow a tiny speck of warmth in the cold expanse. It sailed on, through endless fields of sleeping stars, past galaxies that spun like silent pinwheels in the dark. On and on it drifted, carrying its cargo of memory and life, a quiet lullaby humming through its halls, sailing deeper and deeper into the long, quiet, and peaceful night… into the deep, deep dark… just drifting… slowly… softly… drifting…</textarea>
-
-            <div id="button-container" class="flex space-x-2 mt-6">
-                <button id="generate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">
-                    Generate and Play
-                </button>
-                 <button id="download-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 hidden">
-                    Download All as MP3
-                </button>
-            </div>
-
-             <div id="playback-controls" class="mt-6 items-center justify-between hidden">
-                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-4">
-                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
-                </div>
-                 <p id="current-text-display" class="text-sm text-gray-600 dark:text-gray-400 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg h-24 overflow-y-auto"></p>
-                <div class="flex items-center justify-center mt-4 space-x-4">
-                    <button id="previous-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">Previous</button>
-                     <button id="play-pause-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">Play</button>
-                    <button id="next-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">Next</button>
-                </div>
-            </div>
-
-            <div id="loading-indicator" class="mt-6 flex-col items-center justify-center hidden">
-                <div class="loader mb-2"></div>
-                <p id="loading-text">Generating audio, please wait...</p>
-            </div>
-
-            <div id="error-message" class="mt-4 text-red-500 text-center hidden"></div>
-
-            <audio id="audio-player" class="w-full mt-6 hidden"></audio>
+    <div class="controls">
+        <div class="label-text">Breathing Cycle Speed</div>
+        <div class="slider-group">
+            <span class="label-text">Fast</span>
+            <input type="range" id="speedSlider" min="2" max="10" step="0.5" value="4">
+            <span class="label-text">Slow</span>
         </div>
-        <footer class="text-center mt-4 text-sm text-gray-500 dark:text-gray-400">
-            <p>Powered by Google Gemini</p>
-        </footer>
+        <div class="label-text" id="timeDisplay">4.0 seconds</div>
     </div>
+</div>
 
-    <script>
-        // DOM Elements
-        const generateBtn = document.getElementById('generate-btn');
-        const downloadBtn = document.getElementById('download-btn');
-        const buttonContainer = document.getElementById('button-container');
-        const textInput = document.getElementById('text-input');
-        const voiceSelect = document.getElementById('voice-select');
-        const audioPlayer = document.getElementById('audio-player');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const loadingText = document.getElementById('loading-text');
-        const errorMessage = document.getElementById('error-message');
-        const playbackControls = document.getElementById('playback-controls');
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const previousBtn = document.getElementById('previous-btn');
-        const currentTextDisplay = document.getElementById('current-text-display');
-        const progressBar = document.getElementById('progress-bar');
+<script>
+    const canvas = document.getElementById('breatheCanvas');
+    const ctx = canvas.getContext('2d');
+    const slider = document.getElementById('speedSlider');
+    const timeDisplay = document.getElementById('timeDisplay');
 
-        // State
-        let textChunks = [];
-        let currentChunkIndex = 0;
-        let audioCache = {};
+    // Configuration
+    const baseSize = 80;   // Minimum size of the square
+    const growth = 120;    // How much it grows
+    const canvasCenter = canvas.width / 2;
 
-        function resetUI() {
-            playbackControls.classList.add('hidden');
-            buttonContainer.innerHTML = '';
-            buttonContainer.appendChild(generateBtn);
-            buttonContainer.appendChild(downloadBtn);
-            generateBtn.textContent = 'Generate and Play';
-            downloadBtn.classList.add('hidden');
-            downloadBtn.classList.remove('btn-disabled');
-            downloadBtn.disabled = false;
+    // State
+    let cycleDuration = 4000; // Default 4 seconds (in ms)
+    let phase = 0; // 0.0 to 1.0 represents one full cycle
+    let lastFrameTime = 0;
+
+    // Listen for slider changes
+    slider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        cycleDuration = val * 1000;
+        timeDisplay.textContent = val.toFixed(1) + " seconds";
+    });
+
+    function easeInOutSine(x) {
+        // This math converts a 0-1 linear progress into a sine wave
+        // -cos moves from -1 to 1. We shift and scale to get 0 to 1.
+        return -(Math.cos(Math.PI * x) - 1) / 2;
+    }
+
+    function draw(timestamp) {
+        if (!lastFrameTime) lastFrameTime = timestamp;
+        const deltaTime = timestamp - lastFrameTime;
+        lastFrameTime = timestamp;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Update Phase
+        // We add to the phase based on how much time passed vs the total duration
+        phase += deltaTime / cycleDuration;
+        if (phase > 1) phase -= 1; // Loop back to 0
+
+        // Determine if we are inhaling (0.0 - 0.5) or exhaling (0.5 - 1.0)
+        // We use a Sine wave for the actual size calculation to make it smooth
+        // We map the 0-1 phase to a 0-2PI angle
+        const angle = phase * Math.PI * 2;
+        
+        // Calculate factor (0 to 1) oscillating smoothly
+        // We shift the phase by -PI/2 so the animation starts at the smallest size
+        const sizeFactor = (Math.sin(angle - Math.PI / 2) + 1) / 2;
+        
+        const currentSize = baseSize + (sizeFactor * growth);
+        
+        // Draw the Box
+        const offset = currentSize / 2;
+        
+        // Soft Blue color with slight transparency
+        ctx.fillStyle = 'rgba(100, 149, 237, 0.8)'; // Cornflower Blue
+        
+        // Draw rounded rectangle logic (simplified for visual clarity)
+        ctx.beginPath();
+        ctx.roundRect(canvasCenter - offset, canvasCenter - offset, currentSize, currentSize, 20);
+        ctx.fill();
+
+        // Draw Text
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Sync text with phase
+        // 0.0 to 0.5 is growing (Inhale), 0.5 to 1.0 is shrinking (Exhale)
+        let text = "";
+        if (phase < 0.5) {
+            text = "Breathe in...";
+        } else {
+            text = "Breathe out...";
         }
 
-        // --- Audio Processing and API Helpers ---
-        function base64ToArrayBuffer(base64) {
-            const binaryString = window.atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
+        ctx.fillText(text, canvasCenter, canvasCenter);
 
-        async function getAudioForChunk(index) {
-            const voice = voiceSelect.value;
-            const cacheKey = `${voice}-${index}`;
-            if (audioCache[cacheKey]) return audioCache[cacheKey];
+        requestAnimationFrame(draw);
+    }
 
-            showLoading(true, `Generating paragraph ${index + 1} of ${textChunks.length}...`);
-            const text = textChunks[index];
-            if (!text) {
-                showError(`Paragraph ${index + 1} is empty.`);
-                return null;
-            }
+    // Start Animation
+    requestAnimationFrame(draw);
 
-            const apiKey = document.getElementById('api-key-input').value.trim();
-            if (!apiKey) {
-                showError("Please enter your Google API Key above.");
-                showLoading(false); 
-                return null;
-            }
+</script>
 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-            const payload = {
-                contents: [{ parts: [{ text }] }],
-                generationConfig: {
-                    responseModalities: ["AUDIO"],
-                    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
-                },
-                model: "gemini-2.5-flash-preview-tts"
-            };
-
-            try {
-                let response;
-                for (let i = 0; i < 5; i++) {
-                    try {
-                        response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                        if (response.ok) break;
-                    } catch (e) { /* ignore network errors for retry */ }
-                    await new Promise(res => setTimeout(res, Math.pow(2, i) * 1000));
-                }
-
-                if (!response || !response.ok) throw new Error(`API failed after retries with status: ${response?.status}`);
-
-                const result = await response.json();
-                const part = result?.candidates?.[0]?.content?.parts?.[0];
-                const audioData = part?.inlineData?.data;
-                const mimeType = part?.inlineData?.mimeType;
-
-                if (audioData && mimeType?.startsWith("audio/")) {
-                    const rateMatch = mimeType.match(/rate=(\d+)/);
-                    const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
-                    const pcmDataBuffer = base64ToArrayBuffer(audioData);
-                    const pcm16Data = new Int16Array(pcmDataBuffer);
-                    const cacheItem = { pcmData: pcm16Data, sampleRate: sampleRate };
-                    audioCache[cacheKey] = cacheItem;
-                    return cacheItem;
-                } else {
-                    throw new Error("Invalid audio data in API response.");
-                }
-            } catch (error) {
-                console.error('API Error:', error);
-                showError(`Failed to generate audio for paragraph ${index + 1}. Error: ${error.message}`);
-                return null;
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // --- MP3 Download Logic (DEFINITIVE FIX) ---
-        function encodeMp3Async(pcmData, sampleRate) {
-            return new Promise((resolve, reject) => {
-                try {
-                    const mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
-                    const sampleBlockSize = 1152;
-                    let mp3Data = [];
-                    let currentOffset = 0;
-
-                    function encodeNextChunk() {
-                        if (currentOffset >= pcmData.length) {
-                            const finalMp3buf = mp3Encoder.flush();
-                            if (finalMp3buf.length > 0) mp3Data.push(new Int8Array(finalMp3buf));
-                            resolve(new Blob(mp3Data, { type: 'audio/mp3' }));
-                            return;
-                        }
-                        const progress = Math.round((currentOffset / pcmData.length) * 100);
-                        showLoading(true, `Encoding to MP3... ${progress}% complete`);
-                        const sampleChunk = pcmData.subarray(currentOffset, currentOffset + sampleBlockSize);
-                        const mp3buf = mp3Encoder.encodeBuffer(sampleChunk);
-                        if (mp3buf.length > 0) mp3Data.push(new Int8Array(mp3buf));
-                        currentOffset += sampleBlockSize;
-                        setTimeout(encodeNextChunk, 0);
-                    }
-                    encodeNextChunk();
-                } catch (err) {
-                    reject(err);
-                }
-            });
-        }
-
-        async function downloadAllAsMP3() {
-            downloadBtn.classList.add('btn-disabled');
-            downloadBtn.disabled = true;
-            showError(null);
-
-            const apiKey = document.getElementById('api-key-input').value.trim();
-            if (!apiKey) {
-                showError("Please enter your Google API Key before downloading.");
-                downloadBtn.classList.remove('btn-disabled');
-                downloadBtn.disabled = false;
-                return;
-            }
-
-            try {
-                let allPcmData = [];
-                let totalLength = 0;
-                let finalSampleRate = 24000;
-
-                for (let i = 0; i < textChunks.length; i++) {
-                    const chunkData = await getAudioForChunk(i);
-                    if (chunkData) {
-                        if (i === 0) finalSampleRate = chunkData.sampleRate;
-                        allPcmData.push(chunkData.pcmData);
-                        totalLength += chunkData.pcmData.length;
-                    }
-                }
-
-                if (allPcmData.length === 0) throw new Error("No audio data available to download.");
-
-                showLoading(true, "Combining audio tracks...");
-                const combinedPcm = new Int16Array(totalLength);
-                let offset = 0;
-                allPcmData.forEach(pcm => {
-                    combinedPcm.set(pcm, offset);
-                    offset += pcm.length;
-                });
-
-                const mp3Blob = await encodeMp3Async(combinedPcm, finalSampleRate);
-                showLoading(false);
-
-                const downloadUrl = URL.createObjectURL(mp3Blob);
-                const finalLink = document.createElement('a');
-                finalLink.href = downloadUrl;
-                finalLink.download = 'audio_output.mp3';
-                finalLink.textContent = 'Save MP3 File';
-                finalLink.className = 'w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-center';
-
-                const startOverBtn = document.createElement('button');
-                startOverBtn.textContent = 'Start Over';
-                startOverBtn.className = 'w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300';
-                startOverBtn.onclick = () => {
-                    resetUI();
-                    URL.revokeObjectURL(downloadUrl);
-                };
-                
-                buttonContainer.innerHTML = '';
-                buttonContainer.appendChild(finalLink);
-                buttonContainer.appendChild(startOverBtn);
-
-            } catch (error) {
-                console.error("Download failed:", error);
-                showError(`Could not create MP3. Error: ${error.message}`);
-                showLoading(false);
-                downloadBtn.classList.remove('btn-disabled');
-                downloadBtn.disabled = false;
-            }
-        }
-
-        // --- Playback Logic ---
-        async function playChunk(index) {
-            currentChunkIndex = index;
-            const audioInfo = await getAudioForChunk(index);
-            if (audioInfo) {
-                const wavBlob = pcmToWav(audioInfo.pcmData, audioInfo.sampleRate);
-                const wavUrl = URL.createObjectURL(wavBlob);
-                audioPlayer.src = wavUrl;
-                audioPlayer.play().catch(e => console.error("Playback error:", e));
-                playPauseBtn.textContent = 'Pause';
-                updateUIForChunk(index);
-            } else {
-                playPauseBtn.textContent = 'Play';
-            }
-        }
-
-        function startPlayback() {
-            const apiKey = document.getElementById('api-key-input').value.trim();
-            if (!apiKey) {
-                showError("Please enter your Google API Key before generating audio.");
-                return;
-            }
-
-            const fullText = textInput.value.trim();
-            if (!fullText) {
-                showError("Please enter some text.");
-                return;
-            }
-            textChunks = fullText.split('\n').filter(t => t.trim().length > 0);
-            if (textChunks.length === 0) {
-                showError("No text paragraphs found to play.");
-                return;
-            }
-            resetUI();
-            currentChunkIndex = 0;
-            audioCache = {};
-            showError(null);
-            playbackControls.classList.remove('hidden');
-            playbackControls.classList.add('flex', 'flex-col');
-            downloadBtn.classList.remove('hidden');
-            generateBtn.textContent = "Restart Playback";
-            playChunk(0);
-        }
-
-        function pcmToWav(pcmData, sampleRate) {
-            const buffer = new ArrayBuffer(44 + pcmData.length * 2);
-            const view = new DataView(buffer);
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + pcmData.length * 2, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, 1, true); // Mono
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true);
-            writeString(view, 36, 'data');
-            view.setUint32(40, pcmData.length * 2, true);
-            for (let i = 0; i < pcmData.length; i++) {
-                view.setInt16(44 + i * 2, pcmData[i], true);
-            }
-            return new Blob([view], { type: 'audio/wav' });
-        }
-
-        function writeString(view, offset, string) {
-            for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
-        }
-
-        // --- UI and Event Handlers ---
-        function updateUIForChunk(index) {
-            currentTextDisplay.textContent = textChunks[index];
-            progressBar.style.width = `${((index + 1) / textChunks.length) * 100}%`;
-            previousBtn.disabled = index === 0;
-            previousBtn.classList.toggle('btn-disabled', index === 0);
-            nextBtn.disabled = index === textChunks.length - 1;
-            nextBtn.classList.toggle('btn-disabled', index === textChunks.length - 1);
-        }
-
-        function handlePlayPause() {
-            if (audioPlayer.paused && audioPlayer.src) {
-                audioPlayer.play();
-                playPauseBtn.textContent = 'Pause';
-            } else {
-                audioPlayer.pause();
-                playPauseBtn.textContent = 'Play';
-            }
-        }
-
-        audioPlayer.addEventListener('ended', () => {
-            if (currentChunkIndex < textChunks.length - 1) playChunk(currentChunkIndex + 1);
-            else playPauseBtn.textContent = 'Play';
-        });
-
-        function showLoading(isLoading, message = "Generating audio, please wait...") {
-            loadingText.textContent = message;
-            loadingIndicator.style.display = isLoading ? 'flex' : 'none';
-        }
-
-        function showError(message) {
-            errorMessage.style.display = message ? 'block' : 'none';
-            errorMessage.textContent = message;
-        }
-
-        // Event Listeners
-        generateBtn.addEventListener('click', startPlayback);
-        downloadBtn.addEventListener('click', downloadAllAsMP3);
-        playPauseBtn.addEventListener('click', handlePlayPause);
-        nextBtn.addEventListener('click', () => { if (currentChunkIndex < textChunks.length - 1) playChunk(currentChunkIndex + 1); });
-        previousBtn.addEventListener('click', () => { if (currentChunkIndex > 0) playChunk(currentChunkIndex - 1); });
-
-    </script>
 </body>
 </html>
