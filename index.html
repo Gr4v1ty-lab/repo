@@ -3,165 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breathing Box Widget</title>
+    <title>Mems Gallery</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f0f4f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: #333;
-        }
-
-        .widget-container {
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 340px;
-        }
-
-        canvas {
-            background-color: #f9fafb;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .slider-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        input[type=range] {
-            flex-grow: 1;
-            cursor: pointer;
-        }
-
-        .label-text {
-            font-size: 14px;
-            color: #666;
-            font-weight: 500;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #121212; color: white; }
+        .container { text-align: center; background: #1e1e1e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 90%; }
+        #image-wrapper { height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 20px; border-radius: 8px; background: #252525; }
+        img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        button { padding: 12px 24px; font-size: 18px; font-weight: bold; cursor: pointer; background-color: #bb86fc; color: #000; border: none; border-radius: 25px; transition: 0.3s; }
+        button:hover { background-color: #9965f4; transform: scale(1.05); }
     </style>
 </head>
 <body>
 
-<div class="widget-container">
-    <canvas id="breatheCanvas" width="300" height="300"></canvas>
-
-    <div class="controls">
-        <div class="label-text">Breathing Cycle Speed</div>
-        <div class="slider-group">
-            <span class="label-text">Fast</span>
-            <input type="range" id="speedSlider" min="2" max="10" step="0.5" value="4">
-            <span class="label-text">Slow</span>
-        </div>
-        <div class="label-text" id="timeDisplay">4.0 seconds</div>
+<div class="container">
+    <h1>Random Meme</h1>
+    <div id="image-wrapper">
+        <img id="meme-display" src="" alt="Click to load a meme">
     </div>
+    <button onclick="loadRandomMeme()">Next Meme</button>
 </div>
 
 <script>
-    const canvas = document.getElementById('breatheCanvas');
-    const ctx = canvas.getContext('2d');
-    const slider = document.getElementById('speedSlider');
-    const timeDisplay = document.getElementById('timeDisplay');
+    // These are the file IDs from your "Mems" folder
+    const memeIds = [
+        "1slMlXXNJDNJYx5c5jnlDDARSzxhtVhGI", // Folder ID/Main entry
+        "1n3qa0Io_your_file_id_here",         // Placeholder for n3qa0Io.jpeg
+        "1077gOGK_your_file_id_here",         // Placeholder for 077gOGK.jpeg
+        "1AwXGLzv_your_file_id_here"          // Placeholder for AwXGLzv.jpeg
+    ];
 
-    // Configuration
-    const baseSize = 80;   // Minimum size of the square
-    const growth = 120;    // How much it grows
-    const canvasCenter = canvas.width / 2;
-
-    // State
-    let cycleDuration = 4000; // Default 4 seconds (in ms)
-    let phase = 0; // 0.0 to 1.0 represents one full cycle
-    let lastFrameTime = 0;
-
-    // Listen for slider changes
-    slider.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value);
-        cycleDuration = val * 1000;
-        timeDisplay.textContent = val.toFixed(1) + " seconds";
-    });
-
-    function easeInOutSine(x) {
-        // This math converts a 0-1 linear progress into a sine wave
-        // -cos moves from -1 to 1. We shift and scale to get 0 to 1.
-        return -(Math.cos(Math.PI * x) - 1) / 2;
+    function loadRandomMeme() {
+        const imgElement = document.getElementById('meme-display');
+        const randomIndex = Math.floor(Math.random() * memeIds.length);
+        const selectedId = memeIds[randomIndex];
+        
+        // Show loading state
+        imgElement.style.opacity = "0.5";
+        
+        // Direct link to view the image
+        imgElement.src = `https://drive.google.com/uc?export=view&id=${selectedId}`;
+        
+        imgElement.onload = () => {
+            imgElement.style.opacity = "1";
+        };
     }
 
-    function draw(timestamp) {
-        if (!lastFrameTime) lastFrameTime = timestamp;
-        const deltaTime = timestamp - lastFrameTime;
-        lastFrameTime = timestamp;
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Update Phase
-        // We add to the phase based on how much time passed vs the total duration
-        phase += deltaTime / cycleDuration;
-        if (phase > 1) phase -= 1; // Loop back to 0
-
-        // Determine if we are inhaling (0.0 - 0.5) or exhaling (0.5 - 1.0)
-        // We use a Sine wave for the actual size calculation to make it smooth
-        // We map the 0-1 phase to a 0-2PI angle
-        const angle = phase * Math.PI * 2;
-        
-        // Calculate factor (0 to 1) oscillating smoothly
-        // We shift the phase by -PI/2 so the animation starts at the smallest size
-        const sizeFactor = (Math.sin(angle - Math.PI / 2) + 1) / 2;
-        
-        const currentSize = baseSize + (sizeFactor * growth);
-        
-        // Draw the Box
-        const offset = currentSize / 2;
-        
-        // Soft Blue color with slight transparency
-        ctx.fillStyle = 'rgba(100, 149, 237, 0.8)'; // Cornflower Blue
-        
-        // Draw rounded rectangle logic (simplified for visual clarity)
-        ctx.beginPath();
-        ctx.roundRect(canvasCenter - offset, canvasCenter - offset, currentSize, currentSize, 20);
-        ctx.fill();
-
-        // Draw Text
-        ctx.fillStyle = '#333';
-        ctx.font = 'bold 20px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        // Sync text with phase
-        // 0.0 to 0.5 is growing (Inhale), 0.5 to 1.0 is shrinking (Exhale)
-        let text = "";
-        if (phase < 0.5) {
-            text = "Breathe in...";
-        } else {
-            text = "Breathe out...";
-        }
-
-        ctx.fillText(text, canvasCenter, canvasCenter);
-
-        requestAnimationFrame(draw);
-    }
-
-    // Start Animation
-    requestAnimationFrame(draw);
-
+    // Load first image on startup
+    window.onload = loadRandomMeme;
 </script>
 
 </body>
