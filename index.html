@@ -5,12 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mems Gallery</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #121212; color: white; }
-        .container { text-align: center; background: #1e1e1e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 90%; }
-        #image-wrapper { height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 20px; border-radius: 8px; background: #252525; }
-        img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        button { padding: 12px 24px; font-size: 18px; font-weight: bold; cursor: pointer; background-color: #bb86fc; color: #000; border: none; border-radius: 25px; transition: 0.3s; }
-        button:hover { background-color: #9965f4; transform: scale(1.05); }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            background-color: #121212; 
+            color: white; 
+        }
+        .container { 
+            text-align: center; 
+            background: #1e1e1e; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            max-width: 90%; 
+            width: 600px;
+        }
+        #image-wrapper { 
+            height: 450px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            margin-bottom: 20px; 
+            border-radius: 8px; 
+            background: #252525; 
+            border: 1px solid #333;
+        }
+        img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; 
+            transition: opacity 0.3s ease-in-out;
+        }
+        button { 
+            padding: 12px 30px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            background-color: #bb86fc; 
+            color: #000; 
+            border: none; 
+            border-radius: 25px; 
+            transition: 0.3s; 
+            box-shadow: 0 4px 10px rgba(187, 134, 252, 0.3);
+        }
+        button:hover { 
+            background-color: #9965f4; 
+            transform: scale(1.05); 
+        }
+        button:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -18,44 +68,44 @@
 <div class="container">
     <h1>Random Meme</h1>
     <div id="image-wrapper">
-        <img id="meme-display" src="" alt="Click to load a meme">
+        <img id="meme-display" src="" alt="Loading your meme...">
     </div>
     <button onclick="loadRandomMeme()">Next Meme</button>
 </div>
 
 <script>
-    // Specific file IDs retrieved from your "Mems" folder
+    // These IDs are pulled directly from your "Mems" Drive folder
     const memeIds = [
-        "15IFDE9VgK2PLZyXoxZfzEvXUBp2INB0o", // oZ0pkVK.jpeg
-        "1Ye0fBf3OYhLynS3ybW3KzO4-IBmb_B6J", // OxDn1BM.jpeg
-        "1zuPtXvC2mS0PH9MizoSvhnL_oEihp8qb", // l2xz2OV.jpeg
-        "1PVXAKwvwKRMmZOiG7SDgTB_e6gDYUOZa", // Itg5YSQ.jpeg
-        "1ggzjsObNiswBbCtsJ3E9el6Td5FL3clC", // IlmZRaM.jpeg
-        "1_kd-cWiSW0VbF41c9UzlaM2D0XlAxBYC", // kYzXS0K.jpeg
-        "1P89N56EoBYFO--fPDLuCduAwE_NVec02", // ox2TblP.jpeg
-        "1QpU3W--o4jjW_sSUpdyr4c5A9RQ7VYFH", // iVLpYQT.jpeg
-        "1v777XnZqIMnfbxiPHJt40xa3XGUtAMaa", // Ov6RGHD.jpeg
-        "1auqyDhbd0faxZm7odDUGisOIhPAi7P_u", // P0asVZR.jpeg
-        "1q7zk5RuXxjt4FRaurfpLodF0ZXZuWBrb", // KYKyY1H.jpeg
-        "1ycI0pENrmuqFciPZFdHgtlR3hnXgG4F8", // lBoqAej.jpeg
-        "1wLRe3B5CYGBnskPj2_MieXPdU76__OCv", // IEZbFTK.jpeg
-        "1F-Mdb-B8Jt2BiKduwURk1lVW7Kfh7Xv7", // MfvuIkx.jpeg
-        "108qDV96R1hFvGWzy6SDJWFcmWrORGTwZ", // O8GndDE.jpeg
-        "1G1CDNAfYxHUFvg41B1l4BvjzSWNJKzSm", // HAA2fYD.jpeg
-        "1MmYyEX5UCC2hm5zpQQ51zSqIGYyBrbEE", // HAJx8kv.jpeg
-        "1zr62sakqipDnZZxKWHffllv4-wCo3H65", // GZlcxWC.jpeg
-        "1h5JTyjAVzNHzPah-ZgQvkc9Nu2BNYjKO", // OQ7CjGR.jpeg
-        "192e-iYfP_-hNjd1d1sMIxITEuDTM098t", // OIoidww.jpeg
-        "13IwVA09WFo2FYOklY1drvhwDKPTb1Y4h", // n3qa0Io.jpeg
-        "1DrJ74-ZNK6hJKfwwLv6-D9SHOUuUD_Nc", // mkaglVS.jpeg
-        "1YrpLP47UHwUcjncQsvfEjse9HuBFHss4", // j5bgitt.jpeg
-        "14myMcPIB_-Y0dxLW7UgHN6uNRRKbHPT2", // GbcGkJm.jpeg
-        "1_ssFKIRKPTrzCI7StNp75YyWmWxTcqx7", // oCAMfGQ.jpeg
-        "1NamzpqMVKYfLc__I93bxgyjzaJu-ZOXw", // o4tjmZY.jpeg
-        "1MhVNlcCgcUyQHs6fQkXKTw22tXVJ1UAz", // G7qiYg1.jpeg
-        "1VLsOSDnMe4nXhpa-bP3aqg00M7ZMFa-I", // FpiJXey.jpeg
-        "1XPF0wOzZ0S9Libf8iBxRwPunV2uB9N0Y", // HDCoXCt.jpeg
-        "1rNh1A6jkyP_htovFsfbgkri00uN4F2VL"  // hD4YEIw.jpeg
+        "15IFDE9VgK2PLZyXoxZfzEvXUBp2INB0o",
+        "1Ye0fBf3OYhLynS3ybW3KzO4-IBmb_B6J",
+        "1zuPtXvC2mS0PH9MizoSvhnL_oEihp8qb",
+        "1PVXAKwvwKRMmZOiG7SDgTB_e6gDYUOZa",
+        "1ggzjsObNiswBbCtsJ3E9el6Td5FL3clC",
+        "1_kd-cWiSW0VbF41c9UzlaM2D0XlAxBYC",
+        "1P89N56EoBYFO--fPDLuCduAwE_NVec02",
+        "1QpU3W--o4jjW_sSUpdyr4c5A9RQ7VYFH",
+        "1v777XnZqIMnfbxiPHJt40xa3XGUtAMaa",
+        "1auqyDhbd0faxZm7odDUGisOIhPAi7P_u",
+        "1q7zk5RuXxjt4FRaurfpLodF0ZXZuWBrb",
+        "1ycI0pENrmuqFciPZFdHgtlR3hnXgG4F8",
+        "1wLRe3B5CYGBnskPj2_MieXPdU76__OCv",
+        "1F-Mdb-B8Jt2BiKduwURk1lVW7Kfh7Xv7",
+        "108qDV96R1hFvGWzy6SDJWFcmWrORGTwZ",
+        "1G1CDNAfYxHUFvg41B1l4BvjzSWNJKzSm",
+        "1MmYyEX5UCC2hm5zpQQ51zSqIGYyBrbEE",
+        "1zr62sakqipDnZZxKWHffllv4-wCo3H65",
+        "1h5JTyjAVzNHzPah-ZgQvkc9Nu2BNYjKO",
+        "192e-iYfP_-hNjd1d1sMIxITEuDTM098t",
+        "13IwVA09WFo2FYOklY1drvhwDKPTb1Y4h",
+        "1DrJ74-ZNK6hJKfwwLv6-D9SHOUuUD_Nc",
+        "1YrpLP47UHwUcjncQsvfEjse9HuBFHss4",
+        "14myMcPIB_-Y0dxLW7UgHN6uNRRKbHPT2",
+        "1_ssFKIRKPTrzCI7StNp75YyWmWxTcqx7",
+        "1NamzpqMVKYfLc__I93bxgyjzaJu-ZOXw",
+        "1MhVNlcCgcUyQHs6fQkXKTw22tXVJ1UAz",
+        "1VLsOSDnMe4nXhpa-bP3aqg00M7ZMFa-I",
+        "1XPF0wOzZ0S9Libf8iBxRwPunV2uB9N0Y",
+        "1rNh1A6jkyP_htovFsfbgkri00uN4F2VL"
     ];
 
     function loadRandomMeme() {
@@ -63,14 +113,26 @@
         const randomIndex = Math.floor(Math.random() * memeIds.length);
         const selectedId = memeIds[randomIndex];
         
-        imgElement.style.opacity = "0.5";
-        imgElement.src = `https://drive.google.com/uc?export=view&id=${selectedId}`;
+        // Start fade out/loading effect
+        imgElement.style.opacity = "0";
         
+        // Using the thumbnail endpoint for better cross-site compatibility
+        // sz=w1000 ensures we get a high-quality version
+        imgElement.src = `https://drive.google.com/thumbnail?id=${selectedId}&sz=w1000`;
+        
+        // Only fade in once the image has actually loaded from Google's servers
         imgElement.onload = () => {
             imgElement.style.opacity = "1";
         };
+
+        // Error handling if a link breaks
+        imgElement.onerror = () => {
+            console.error("Could not load image ID:", selectedId);
+            loadRandomMeme(); // Try another one automatically
+        };
     }
 
+    // Load the first image when the page opens
     window.onload = loadRandomMeme;
 </script>
 
